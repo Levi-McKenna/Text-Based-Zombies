@@ -1,0 +1,9 @@
+./src/interfaces/Identifier.java
+./src/Player.java
+./src/Game.java
+./src/Entity.java
+./src/Tests.java
+./src/world/Obstacle.java
+./src/Level.java
+./src/Position.java
+./src/TBZ.java

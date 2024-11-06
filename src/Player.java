@@ -1,6 +1,6 @@
-public class Player {
+
+public class Player extends Entity {
     // fields
-    public int id;
 
     public Player() {
 
