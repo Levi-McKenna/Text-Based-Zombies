@@ -20,7 +20,6 @@ public class Level {
      * @return the complete level
      */
     private static List<String> loadLevel(String path) {
-        int lines = 0;
         try {
             BufferedReader reader = new BufferedReader(new FileReader(path));
             // find array bound
@@ -45,7 +44,7 @@ public class Level {
 
         // should only return when failed
         List<String> errorReport = new ArrayList<String>();
-        errorReport.addLast("Error - Failed to resolve file to level");
+        errorReport.add("Error - Failed to resolve file to level");
         return errorReport;
     }
 
