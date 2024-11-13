@@ -1,16 +1,31 @@
+package world;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Arrays;
+// local imports
+import world.entity.Position;
 
 public class Level {
     public final List<String> level;
     public final Position bounds;
+    public final Position playerSpawn;
 
     public Level(String path) {
         this.level = Level.loadLevel(path);
         this.bounds = new Position(this.level.get(0).length(), this.level.size());
+        this.playerSpawn = new Position(3, 2);
+    }
+
+    public List<String> getLevel() {
+        return this.level;
+    }
+
+    public Position getPlayerSpawn() {
+        return this.playerSpawn;
     }
 
     /**
@@ -24,6 +39,8 @@ public class Level {
             BufferedReader reader = new BufferedReader(new FileReader(path));
             // find array bound
             List<String> level = reader.lines().toList();
+            // swap to mutable
+            level = new ArrayList<>(level);
             reader.close();
             return level;
 
@@ -42,11 +59,14 @@ public class Level {
             e.printStackTrace();
         }
 
-        // should only return when failed
-        List<String> errorReport = new ArrayList<String>();
-        errorReport.add("Error - Failed to resolve file to level");
+        // should only return when failed. (default return)
+        List<String> errorReport = Arrays.asList("Error - Failed to resolve file to level");
         return errorReport;
     }
 
+    // TODO - We also need some metadata for spawns, etc.
+    private void parseMetadata() {
+
+    }
 
 }

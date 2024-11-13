@@ -1,3 +1,5 @@
+package world.entity; 
+
 public class Position {
     // fields
     private int x;

@@ -1,4 +1,3 @@
-./src/interfaces/Identifier.java
 ./src/Player.java
 ./src/Game.java
 ./src/Entity.java
