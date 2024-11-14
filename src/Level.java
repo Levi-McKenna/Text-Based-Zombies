@@ -4,11 +4,16 @@ import java.io.IOException;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
+// local imports
+import world.entity.Position;
 
 public class Level {
     public final List<String> level;
     public final Position bounds;
+    // TODO - add all fields that correspond to metadat
     public final Position playerSpawn;
+    public final Position[] enemySpawns;
+    // public final Door[] doors;
 
     public Level(String path, Position playerSpawn) {
         this.level = Level.loadLevel(path);
@@ -62,7 +67,6 @@ public class Level {
 
     // TODO - We also need some metadata for spawns, etc.
     private void parseMetadata() {
-        
     }
 
 }
