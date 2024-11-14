@@ -50,8 +50,14 @@ public class World {
         }
 
         setWorldChar(idToPosition.get(entity.getID()), ' ');
-        this.idToPosition.replace(entity.getID(), entity.getPosition());
-        setWorldChar(entity.getPosition(), entity.getSprite());
+        if (!entity.getPosition().equals(new Position(-1, -1))) {
+            this.idToPosition.replace(entity.getID(), entity.getPosition());
+            setWorldChar(entity.getPosition(), entity.getSprite());
+        // remove entity from world
+        } else {
+            setWorldChar(this.idToPosition.get(entity.getID()), ' ');
+            this.idToPosition.remove(entity.getID());
+        }
     }
 
     private void setWorldChar(Position position, char sprite) {

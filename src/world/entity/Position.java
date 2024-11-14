@@ -27,6 +27,13 @@ public class Position {
     }
 
     // other methods
+
+    public boolean equals(Position position) {
+        if (this.getX() == position.getX()) return true;
+        else if (this.getY() == position.getY()) return true;
+
+        return false;
+    }
     // TODO - finish this method
     // public static boolean checkIfInBounds(Level level, int x, int y) {
     //     
