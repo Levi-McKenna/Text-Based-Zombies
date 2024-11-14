@@ -71,6 +71,13 @@ public class Game extends JFrame implements KeyListener {
         this.entities.add(entity);
     }
 
+    public void removeEntity(Entity entity) {
+        entity.setPosition(new Position(-1, -1));
+        this.world.setEntityPosition(entity);
+        // if this doesnt work then kill me
+        this.entities.remove(entity);
+    }
+
     public void printMainMenu() {
 
     }
