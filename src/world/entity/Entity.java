@@ -5,11 +5,16 @@ import java.util.Set;
 public abstract class Entity {
     // fields
     private int id;
+    private int health;
     private Position position;
     private char sprite;
 
     public int getID() {
         return this.id;
+    }
+
+    public int getHealth() {
+        return this.health;
     }
 
     public Position getPosition() {
@@ -20,7 +25,10 @@ public abstract class Entity {
         return this.sprite;
     }
 
-    // default implementation
+    public void setHealth(int health) {
+        this.health = health;
+    }
+
     public void setPosition(Position position) {
         this.position = position;
     }
@@ -50,5 +58,11 @@ public abstract class Entity {
         int newY = this.getPosition().getY() + y;
 
         this.setPosition(new Position(newX, newY));
+    }
+
+    public void substractHealth(int subtrahend) {
+        if (this.getHealth() > subtrahend) {
+            this.setHealth(this.getHealth() - subtrahend);
+        } else this.setHealth(0);
     }
 }
