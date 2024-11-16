@@ -12,13 +12,14 @@ public class Level {
     public final Position bounds;
     // TODO - add all fields that correspond to metadat
     public final Position playerSpawn;
-    public final Position[] enemySpawns;
+    private Position[] enemySpawns;
     // public final Door[] doors;
 
     public Level(String path, Position playerSpawn) {
         this.level = Level.loadLevel(path);
         this.bounds = new Position(this.level.get(0).length(), this.level.size());
         this.playerSpawn = playerSpawn;
+        this.parseMetadata();
     }
 
     public List<String> getLevel() {
@@ -67,6 +68,7 @@ public class Level {
 
     // TODO - We also need some metadata for spawns, etc.
     private void parseMetadata() {
+        this.enemySpawns = new Position[3];
     }
 
 }
