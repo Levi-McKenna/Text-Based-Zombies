@@ -1,8 +1,10 @@
+package TBZ;
+
 import java.util.Set;
 // local imports
-import world.entity.Position;
-import world.entity.Directions;
-import world.entity.Entity;
+import TBZ.world.entity.Position;
+import TBZ.world.entity.Directions;
+import TBZ.world.entity.Entity;
 
 public class Player extends Entity {
     // field

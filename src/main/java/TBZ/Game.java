@@ -1,11 +1,13 @@
+package TBZ;
+
 import java.util.HashSet;
 import java.util.Set;
 import java.awt.event.*;
 import javax.swing.*;
 // local imports 
-import world.World;
-import world.entity.Entity;
-import world.entity.Position;
+import TBZ.world.World;
+import TBZ.world.entity.Entity;
+import TBZ.world.entity.Position;
 
 public class Game extends JFrame implements KeyListener {
     private World world;
@@ -13,7 +15,7 @@ public class Game extends JFrame implements KeyListener {
     private Player player;
 
     public Game() {
-        this.world = new World("./levels/test/");
+        this.world = new World("./target/classes/TBZ/levels/test/");
         this.player = new Player(entities, new Position(3, 4));
         this.entities = new HashSet<>();
     }    

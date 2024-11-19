@@ -1,4 +1,4 @@
-package world;
+package TBZ.world;
 
 public abstract class Buyable {
 

@@ -1,4 +1,4 @@
-package world.entity;
+package TBZ.world.entity;
 
 import java.util.Set;
 
