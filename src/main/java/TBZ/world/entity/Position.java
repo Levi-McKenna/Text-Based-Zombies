@@ -1,4 +1,4 @@
-package world.entity; 
+package TBZ.world.entity; 
 
 public class Position {
     // fields

@@ -1,11 +1,11 @@
-package world;
+package TBZ.world;
 
 import java.util.List;
 import java.io.File;
 import java.util.HashMap;
 // local imports 
-import world.entity.Entity;
-import world.entity.Position;
+import TBZ.world.entity.Entity;
+import TBZ.world.entity.Position;
 
 public class World {
     private Level level;
@@ -29,9 +29,11 @@ public class World {
                 levelDirs[i] = files[i].toString();
             }
         } else {
-            System.out.println("Error - Not a directory");
+            System.out.println("Error - " + dir.getAbsolutePath() + " is not a directory");
+            File pwd = new File(".");
+            System.out.println(pwd.getAbsolutePath());
         }
-        this.level = new Level(levelDirs[levelIndex]);
+        this.level = new Level(levelDirs[levelIndex], levelDirs[levelDirs.length-1]);
         this.world = level.getLevel();
         this.idToPosition = new HashMap<>();
     }

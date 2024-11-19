@@ -1,4 +1,4 @@
-package world;
+package TBZ.world;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -6,18 +6,23 @@ import java.io.IOException;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
+import org.json.*;
 // local imports
-import world.entity.Position;
+import TBZ.world.entity.Position;
 
 public class Level {
     public final List<String> level;
     public final Position bounds;
+    // TODO - add all fields that correspond to metadat
     public final Position playerSpawn;
+    private Position[] enemySpawns;
+    // public final Door[] doors;
 
-    public Level(String path) {
-        this.level = Level.loadLevel(path);
+    public Level(String levelPath, String metaPath) {
+        this.level = Level.loadLevel(levelPath);
         this.bounds = new Position(this.level.get(0).length(), this.level.size());
         this.playerSpawn = new Position(3, 2);
+        this.parseMetadata(metaPath);
     }
 
     public List<String> getLevel() {
@@ -65,7 +70,7 @@ public class Level {
     }
 
     // TODO - We also need some metadata for spawns, etc.
-    private void parseMetadata() {
+    private void parseMetadata(String metaPath) {
 
     }
 
