@@ -16,7 +16,7 @@ public class Game extends JFrame implements KeyListener {
 
     public Game() {
         this.world = new World("./target/classes/TBZ/levels/test/");
-        this.player = new Player(entities, new Position(3, 4));
+        this.player = new Player(entities, this.world.getLevel().getPlayerSpawn());
         this.entities = new HashSet<>();
     }    
 

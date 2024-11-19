@@ -1,15 +1,15 @@
 {
-    "1": {
+    "0": {
         "playerSpawn": {
             "x": 2,
             "y": 1
         },
-        "doors": [
-            {"x": 20, "y": 2}: {
+        "doors": {
+            "balls": {
                 "level": "2",
-                "resultantPosition": {"x": , "y":}
+                "resultantPosition": {"x": 20, "y": 20}
             }
-        ],
+        },
         "spawns": [
             {
                 "x": 1,
@@ -21,10 +21,10 @@
             }
         ]
     },
-    "2": {
+    "1": {
 
     },
-    "3": {
+    "2": {
 
     }
 }

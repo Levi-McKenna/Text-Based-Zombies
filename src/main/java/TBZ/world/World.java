@@ -25,7 +25,6 @@ public class World {
 
             // add all directories to levelDirs
             for (int i = 0; i < files.length; i++) {
-                System.out.println(files[i]);
                 levelDirs[i] = files[i].toString();
             }
         } else {
@@ -33,7 +32,7 @@ public class World {
             File pwd = new File(".");
             System.out.println(pwd.getAbsolutePath());
         }
-        this.level = new Level(levelDirs[levelIndex], levelDirs[levelDirs.length-1]);
+        this.level = new Level(levelDirs[levelIndex], levelDirs[levelDirs.length-1], levelIndex);
         this.world = level.getLevel();
         this.idToPosition = new HashMap<>();
     }
@@ -88,6 +87,7 @@ public class World {
             e.printStackTrace();
         }
     }
+
 
     // problems:
     // public void moveEntity(List<String> world, Position position) {
