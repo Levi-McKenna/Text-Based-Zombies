@@ -11,16 +11,17 @@ import org.json.JSONArray;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.HashMap;
 // local imports
 import TBZ.world.entity.Position;
+import TBZ.world.Door;
 
 public class Level {
     public final List<String> level;
     public final Position bounds;
-    // TODO - add all fields that correspond to metadat
     private Position playerSpawn;
     private Position[] enemySpawns;
-    // public final Door[] doors;
+    private HashMap<Position, Door> doors;
 
     public Level(String levelPath, String metaPath, int levelIndex) {
         this.level = Level.loadLevel(levelPath);
@@ -95,6 +96,33 @@ public class Level {
             JSONObject playerSpawnObj = levelObj.getJSONObject("playerSpawn");
             Position playerSpawn = new Position(playerSpawnObj.getInt("x"), playerSpawnObj.getInt("y"));
             this.setPlayerSpawn(playerSpawn);
+
+            // set enemy spawns
+            JSONArray enemySpawns = levelObj.getJSONArray("spawns");
+            this.enemySpawns = new Position[enemySpawns.length()];
+            for (int i = 0; i < enemySpawns.length(); i++) {
+                JSONObject enemySpawn = enemySpawns.getJSONObject(i);
+                Position position = new Position(enemySpawn.getInt("x"), enemySpawn.getInt("y"));
+                this.enemySpawns[i] = position;
+            }
+
+            // set all doors
+            JSONArray doors = levelObj.getJSONArray("doors");
+            this.doors = new HashMap<Position, Door>();
+            for (int i = 0; i < doors.length(); i++) {
+                JSONObject door = doors.getJSONObject(i);
+                // find key of type Position
+                JSONObject position = door.getJSONObject("position");
+                Position key = new Position(position.getInt("x"), position.getInt("y"));
+                // initialize value of type Door
+                int resultantLevelIndex = door.getInt("resultantLevel");
+                JSONObject resultantPositionObj = door.getJSONObject("resultantPosition");
+                Position resultantPosition = new Position(resultantPositionObj.getInt("x"), resultantPositionObj.getInt("y"));
+                Door value = new Door(resultantPosition, resultantLevelIndex);
+
+                this.doors.put(key, value);
+            }
+
 
             // maybe? : 
             //// check if level is valid -  
