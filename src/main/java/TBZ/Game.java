@@ -1,23 +1,23 @@
 package TBZ;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
 import java.awt.event.*;
 import javax.swing.*;
 // local imports 
 import TBZ.world.World;
 import TBZ.world.entity.Entity;
 import TBZ.world.entity.Position;
+import TBZ.world.entity.Directions;
 
 public class Game extends JFrame implements KeyListener {
     private World world;
-    private Set<Entity> entities;
+    private HashMap<Integer, Entity> entities;
     private Player player;
 
     public Game() {
         this.world = new World("./target/classes/TBZ/levels/test/");
-        this.player = new Player(entities, this.world.getLevel().getPlayerSpawn());
-        this.entities = new HashSet<>();
+        this.player = new Player(this.world.getLevel().getPlayerSpawn());
+        this.entities = new HashMap<>();
     }    
 
     public void run() {
@@ -27,9 +27,10 @@ public class Game extends JFrame implements KeyListener {
         this.setVisible(true);
 
         this.spawnEntity(this.player);
+        this.spawnEntity(this.player.getDSprite());
         while (true) {
             world.renderWorld();
-            for (Entity entity : entities) {
+            for (Entity entity : entities.values()) {
                 this.world.setEntityPosition(entity);
             }
         }
@@ -39,19 +40,40 @@ public class Game extends JFrame implements KeyListener {
 
     public void keyPressed(KeyEvent e) {
         int keycode = e.getKeyCode();
+        Position newPos = new Position(0, 0);
         switch (keycode) {
             case KeyEvent.VK_UP:
-                player.move(0, -1);
+                if (this.player.getDirection() == Directions.UP) {
+                    newPos = new Position(0, -1);
+                } else {
+                    player.setDirection(Directions.UP);
+                }
                 break;
             case KeyEvent.VK_DOWN:
-                player.move(0, 1);
+                if (this.player.getDirection() == Directions.DOWN) {
+                    newPos = new Position(0, 1);
+                } else {
+                    player.setDirection(Directions.DOWN);
+                }
                 break;
             case KeyEvent.VK_RIGHT:
-                player.move(1, 0);
+                if (this.player.getDirection() == Directions.RIGHT) {
+                    newPos = new Position(1, 0);
+                } else {
+                    player.setDirection(Directions.RIGHT);
+                }
                 break;
             case KeyEvent.VK_LEFT:
-                player.move(-1, 0);
+                if (this.player.getDirection() == Directions.LEFT) {
+                    newPos = new Position(-1, 0);
+                } else {
+                    player.setDirection(Directions.LEFT);
+                }
                 break;
+        }
+        // check to make sure player will not collide
+        if (!this.world.willCollide(this.player.getPosition().plus(newPos))) {
+            player.move(newPos.getX(), newPos.getY());
         }
     }
 
@@ -69,15 +91,17 @@ public class Game extends JFrame implements KeyListener {
      * @param entity entity to spawn
      */
     public void spawnEntity(Entity entity) {
+        // be sure to set the ID of the thang of course
+        entity.setID(this.entities);
         this.world.setEntityPosition(entity);
-        this.entities.add(entity);
+        this.entities.put(entity.getID(), entity);
     }
 
-    public void removeEntity(Entity entity) {
-        entity.setPosition(new Position(-1, -1));
-        this.world.setEntityPosition(entity);
+    public void removeEntity(int id) {
+        this.entities.get(id).setPosition(new Position(-1, -1));
+        this.world.setEntityPosition(this.entities.get(id));
         // if this doesnt work then kill me
-        this.entities.remove(entity);
+        this.entities.remove(id);
     }
 
     public void printMainMenu() {

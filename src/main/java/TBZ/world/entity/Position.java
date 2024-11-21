@@ -1,5 +1,6 @@
 package TBZ.world.entity; 
 
+
 public class Position {
     // fields
     private int x;
@@ -38,4 +39,10 @@ public class Position {
     // public static boolean checkIfInBounds(Level level, int x, int y) {
     //     
     // }
+
+    // operator overloads
+
+    public Position plus(Position other) {
+        return new Position(this.x + other.getX(), this.y + other.getY());
+    }
 }
