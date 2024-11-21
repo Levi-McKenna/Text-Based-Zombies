@@ -63,7 +63,9 @@ public class World {
 
     private void setWorldChar(Position position, char sprite) {
         char[] lineToMutate = this.world.get(position.getY()).toCharArray();
-        lineToMutate[position.getX()] = sprite;
+        if (!isObstacle(lineToMutate[position.getX()]) || isPlayer(lineToMutate[position.getX()])) {
+            lineToMutate[position.getX()] = sprite;
+        }
 
         String newLine = "";
         for (char character : lineToMutate) {
@@ -71,6 +73,21 @@ public class World {
         }
         world.set(position.getY(), newLine);
 
+    }
+
+    private boolean isObstacle(char character) {
+        if (
+            character != ' ' &&
+            character != '^' &&
+            character != '>' &&
+            character != '<'
+        ) return true;
+        return false;
+    }
+
+    public boolean isPlayer(char character) {
+        if (character == '*') return true;
+        return false;
     }
 
     // TODO - this needs to render all prompts and entities
@@ -86,6 +103,13 @@ public class World {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    public boolean willCollide(Position position) {
+        char[] line = this.world.get(position.getY()).toCharArray();
+        char character = line[position.getX()];
+
+        return isObstacle(character);
     }
 
 

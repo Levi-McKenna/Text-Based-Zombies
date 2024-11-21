@@ -1,6 +1,7 @@
 package TBZ.world.entity;
 
-import java.util.Set;
+import java.util.Collections;
+import java.util.HashMap;
 
 public abstract class Entity {
     // fields
@@ -33,7 +34,7 @@ public abstract class Entity {
         this.position = position;
     }
 
-    public void setID(Set<Entity> entities) {
+    public void setID(HashMap<Integer, Entity> entities) {
         this.id = generateID(entities);
     }
 
@@ -41,16 +42,10 @@ public abstract class Entity {
         this.sprite = sprite;
     }
 
-    public static int generateID(Set<Entity> entities) {
-        int maxId = 0;
-        if (entities != null) {
-            for (Entity entity : entities) {
-                if (maxId == entity.getID() || maxId < entity.getID()) {
-                    maxId = entity.getID();
-                }
-            }
-        }
-        return maxId++;
+    public static int generateID(HashMap<Integer, Entity> entities) {
+        // checks to see if it contains the first id, if so generate a new one
+        if (entities.containsKey(1)) return Collections.max(entities.keySet())+1;
+        return 1;
     }
 
     public void move(int x, int y) {

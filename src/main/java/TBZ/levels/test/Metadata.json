@@ -5,9 +5,10 @@
             "y": 1
         },
         "doors": [
-            {"x": 20, "y": 2}: {
+            {
+                "position": {"x": 20, "y": 2},
                 "level": "2",
-                "resultantPosition": {"x": , "y":}
+                "resultantPosition": {"x": 2, "y": 1}
             }
         ],
         "spawns": [
