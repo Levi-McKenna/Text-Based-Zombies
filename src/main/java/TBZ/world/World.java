@@ -11,6 +11,7 @@ public class World {
     private Level level;
     private List<String> world;
     private String[] levelDirs;
+    private Level[] levels;
     private HashMap<Integer, Position> idToPosition;
     private int levelIndex;
 
@@ -22,6 +23,7 @@ public class World {
         if (dir.exists() && dir.isDirectory()) {
             File[] files = dir.listFiles();
             this.levelDirs = new String[files.length];
+            this.levels = new Level[files.length-1];
 
             // add all directories to levelDirs
             for (int i = 0; i < files.length; i++) {
@@ -32,7 +34,10 @@ public class World {
             File pwd = new File(".");
             System.out.println(pwd.getAbsolutePath());
         }
-        this.level = new Level(levelDirs[levelIndex], levelDirs[levelDirs.length-1], levelIndex);
+        Level tmpLevel = new Level(levelDirs[levelIndex], levelDirs[levelDirs.length-1], levelIndex);
+        this.level = tmpLevel;
+        this.levels[levelIndex] = tmpLevel;
+        // base world
         this.world = level.getLevel();
         this.idToPosition = new HashMap<>();
     }
@@ -112,6 +117,34 @@ public class World {
         return isObstacle(character);
     }
 
+    public boolean isInteractable(Position position) {
+        if (this.level.getInteractables().get(position) != null) return true;
+        return false;
+    }
+
+    public String interactPrompt(Position position) {
+        if (isInteractable(position)) {
+            return this.level.getInteractables().get(position).getPrompt();
+        }
+        return "";
+    }
+
+    public void interactDoor(Position position) {
+        // TODO - non-default behavior for doors
+    }
+
+    public void interact(Position position) {
+        Interactable interactable = this.level.getInteractables().get(position);
+
+        if (isInteractable(position) && interactable.isBuyable()) {
+            // default behavior for all interactables
+            this.level.buyInteractable(position);
+        } else {
+            if (interactable instanceof Door) interactDoor(position);
+        }
+
+        // TODO - for other interactables
+    }
 
     // problems:
     // public void moveEntity(List<String> world, Position position) {

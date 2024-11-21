@@ -13,6 +13,7 @@ public class Game extends JFrame implements KeyListener {
     private World world;
     private HashMap<Integer, Entity> entities;
     private Player player;
+    private String prompt;
 
     public Game() {
         this.world = new World("./target/classes/TBZ/levels/test/");
@@ -29,7 +30,15 @@ public class Game extends JFrame implements KeyListener {
         this.spawnEntity(this.player);
         this.spawnEntity(this.player.getDSprite());
         while (true) {
+            checkForInteractPrompt();
             world.renderWorld();
+            this.renderPrompt();
+            // Do nothing for a bit to generate a stable framerate
+            try {
+                Thread.sleep(15);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             for (Entity entity : entities.values()) {
                 this.world.setEntityPosition(entity);
             }
@@ -106,5 +115,19 @@ public class Game extends JFrame implements KeyListener {
 
     public void printMainMenu() {
 
+    }
+
+    public String checkForInteractPrompt() {
+        if (this.world.isInteractable(this.player.getDSprite().getPosition())) {
+            return this.world.interactPrompt(this.player.getDSprite().getPosition());
+        }
+        return "";
+    }
+
+    public void renderPrompt() {
+        // TODO - Add player inventory
+        this.prompt = this.player.getHealth() + " " + checkForInteractPrompt() + "\n";
+
+        System.out.println(this.prompt);
     }
 }

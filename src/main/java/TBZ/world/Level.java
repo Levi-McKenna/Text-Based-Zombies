@@ -21,7 +21,7 @@ public class Level {
     public final Position bounds;
     private Position playerSpawn;
     private Position[] enemySpawns;
-    private HashMap<Position, Door> doors;
+    private HashMap<Position, Interactable> interactables;
 
     public Level(String levelPath, String metaPath, int levelIndex) {
         this.level = Level.loadLevel(levelPath);
@@ -38,6 +38,10 @@ public class Level {
     public Position getPlayerSpawn() {
         return this.playerSpawn;
     }
+    
+    public HashMap<Position, Interactable> getInteractables() {
+        return this.interactables;
+    }
 
     private void setPlayerSpawn(Position position) {
         this.playerSpawn = position;
@@ -45,6 +49,11 @@ public class Level {
 
     public void setEnemySpawns(Position[] positions) {
         this.enemySpawns = positions;
+    }
+
+    public void buyInteractable(Position position) {
+        // DEV - this might check reference equality
+        this.interactables.get(position).buy();
     }
 
     /**
@@ -108,7 +117,7 @@ public class Level {
 
             // set all doors
             JSONArray doors = levelObj.getJSONArray("doors");
-            this.doors = new HashMap<Position, Door>();
+            this.interactables = new HashMap<Position, Interactable>();
             for (int i = 0; i < doors.length(); i++) {
                 JSONObject door = doors.getJSONObject(i);
                 // find key of type Position
@@ -116,11 +125,12 @@ public class Level {
                 Position key = new Position(position.getInt("x"), position.getInt("y"));
                 // initialize value of type Door
                 int resultantLevelIndex = door.getInt("resultantLevel");
+                int cost = door.getInt("cost");
                 JSONObject resultantPositionObj = door.getJSONObject("resultantPosition");
                 Position resultantPosition = new Position(resultantPositionObj.getInt("x"), resultantPositionObj.getInt("y"));
-                Door value = new Door(resultantPosition, resultantLevelIndex);
+                Door value = new Door(resultantPosition, resultantLevelIndex, cost);
 
-                this.doors.put(key, value);
+                this.interactables.put(key, value);
             }
 
 
