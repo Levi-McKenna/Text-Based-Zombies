@@ -1,5 +1,6 @@
-package TBZ.world.entity; 
+package TBZ.world.entity;
 
+import java.util.Objects;
 
 public class Position {
     // fields
@@ -29,11 +30,16 @@ public class Position {
 
     // other methods
 
-    public boolean equals(Position position) {
-        if (this.getX() == position.getX()) return true;
-        else if (this.getY() == position.getY()) return true;
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null || this.getClass() != obj.getClass()) return false;
+        Position position = (Position) obj;
+        return this.getX() == position.getX() && this.getY() == position.getY();
+    }
 
-        return false;
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.x, this.y);
     }
     // TODO - finish this method
     // public static boolean checkIfInBounds(Level level, int x, int y) {
