@@ -35,7 +35,7 @@ public class Game extends JFrame implements KeyListener {
             this.renderPrompt();
             // Do nothing for a bit to generate a stable framerate
             try {
-                Thread.sleep(15);
+                Thread.sleep(5);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -49,6 +49,8 @@ public class Game extends JFrame implements KeyListener {
 
     public void keyPressed(KeyEvent e) {
         int keycode = e.getKeyCode();
+        Position tmpSpawn = this.world.getLevel().getPlayerSpawn();
+
         Position newPos = new Position(0, 0);
         switch (keycode) {
             case KeyEvent.VK_UP:
@@ -77,6 +79,16 @@ public class Game extends JFrame implements KeyListener {
                     newPos = new Position(-1, 0);
                 } else {
                     player.setDirection(Directions.LEFT);
+                }
+                break;
+            case KeyEvent.VK_E:
+                // interact if there is something to interact with
+                this.world.interact(this.player.getDSprite().getPosition());
+
+                // this is shit but it checks if the player spawn has changed.
+                // if it has then it's a new level and we can move the player
+                if (!tmpSpawn.equals(this.world.getLevel().getPlayerSpawn())) {
+                    player.setPlayerPosition(this.world.getLevel().getPlayerSpawn());
                 }
                 break;
         }
@@ -126,7 +138,7 @@ public class Game extends JFrame implements KeyListener {
 
     public void renderPrompt() {
         // TODO - Add player inventory
-        this.prompt = this.player.getHealth() + " " + checkForInteractPrompt() + "\n";
+        this.prompt = "Health: " + this.player.getHealth() + "%" + " | " + this.player.getPoints() + "\t" + checkForInteractPrompt();
 
         System.out.println(this.prompt);
     }

@@ -48,6 +48,29 @@ public class World {
         return this.level;
     }
 
+    public void setLevel() {
+        if (levels[levelIndex] != null) {
+            this.level = levels[levelIndex];
+            return;
+        }
+
+        Level level = new Level(levelDirs[levelIndex], levelDirs[levelDirs.length-1], levelIndex);
+        this.levels[levelIndex] = level;
+        this.level = level;
+    }
+
+    private void setWorld() {
+        this.world = this.level.getLevel();
+    }
+
+    private void updateLevels() {
+        this.levels[levelIndex] = this.level;
+    }
+
+    public void setLevelIndex(int index) {
+        this.levelIndex = index;
+    }
+
     public void setEntityPosition(Entity entity) {
         if (idToPosition == null || idToPosition.get(entity.getID()) == null) {
             setWorldChar(entity.getPosition(), entity.getSprite());
@@ -102,12 +125,6 @@ public class World {
         for (String line : this.world) {
             System.out.println(line);
         }
-        // Do nothing for a bit to generate a stable framerate
-        try {
-            Thread.sleep(10);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
     }
 
     public boolean willCollide(Position position) {
@@ -129,10 +146,6 @@ public class World {
         return "";
     }
 
-    public void interactDoor(Position position) {
-        // TODO - non-default behavior for doors
-    }
-
     public void interact(Position position) {
         Interactable interactable = this.level.getInteractables().get(position);
 
@@ -140,11 +153,23 @@ public class World {
             // default behavior for all interactables
             this.level.buyInteractable(position);
         } else {
-            if (interactable instanceof Door) interactDoor(position);
+            if (interactable instanceof Door) interactDoor((Door) interactable);
+            return;
         }
 
         // TODO - for other interactables
     }
+
+    private void interactDoor(Door door) {
+        // move to next room
+        this.updateLevels();
+        this.setLevelIndex(door.getResultantLevelIndex());
+        this.setLevel();
+        this.setWorld();
+
+        this.level.setPlayerSpawn(door.getResultantPosition());
+    }
+
 
     // problems:
     // public void moveEntity(List<String> world, Position position) {

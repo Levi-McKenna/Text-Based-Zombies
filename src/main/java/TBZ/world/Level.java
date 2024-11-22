@@ -43,7 +43,7 @@ public class Level {
         return this.interactables;
     }
 
-    private void setPlayerSpawn(Position position) {
+    public void setPlayerSpawn(Position position) {
         this.playerSpawn = position;
     }
 
@@ -128,7 +128,9 @@ public class Level {
                 int cost = door.getInt("cost");
                 JSONObject resultantPositionObj = door.getJSONObject("resultantPosition");
                 Position resultantPosition = new Position(resultantPositionObj.getInt("x"), resultantPositionObj.getInt("y"));
-                Door value = new Door(resultantPosition, resultantLevelIndex, cost);
+                boolean buyable = door.getBoolean("buyable");
+
+                Door value = new Door(resultantPosition, resultantLevelIndex, cost, buyable);
 
                 this.interactables.put(key, value);
             }
