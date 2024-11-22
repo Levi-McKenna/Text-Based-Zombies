@@ -9,12 +9,14 @@ public class Player extends Entity {
     // field
     private Directions direction;
     private DirectionSprite directionSprite;
+    private int points;
 
 
     public Player(Position position) {
         this.setSprite('*');
         this.setPosition(position);
         this.setHealth(100);
+        this.setPoints(0);
         this.directionSprite = new DirectionSprite('^', this
             .getPosition()
             .plus(new Position(0, -1)));
@@ -25,8 +27,21 @@ public class Player extends Entity {
         return this.direction;
     }
 
+    public int getPoints() {
+        return this.points;
+    }
+
     public Entity getDSprite() {
         return directionSprite;
+    }
+
+    public void setPlayerPosition(Position position) {
+        this.setPosition(position);
+        this.setDirection(this.getDirection());
+    }
+
+    public void setPoints(int points) {
+        this.points = points;
     }
 
     public void setDirection(Directions direction) {
@@ -49,6 +64,14 @@ public class Player extends Entity {
                 this.directionSprite.setPosition(new Position(-1, 0).plus(this.getPosition()));
                 break;
         }
+    }
+
+    public void buy(int cost) {
+        this.setPoints(this.getPoints() - cost);
+    }
+
+    public void addPoints(int points) {
+        this.setPoints(this.getPoints() + points);
     }
 
     public void move(int x, int y) {

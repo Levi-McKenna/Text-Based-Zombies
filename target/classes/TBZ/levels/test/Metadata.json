@@ -7,8 +7,9 @@
         "doors": [
             {
                 "position": {"x": 19, "y": 2},
-                "resultantLevel": "2",
-                "resultantPosition": {"x": 2, "y": 1},
+                "resultantLevel": 1,
+                "resultantPosition": {"x": 1, "y": 5},
+                "buyable": true,
                 "cost": 500
             }
         ],
@@ -24,7 +25,29 @@
         ]
     },
     "1": {
-
+        "playerSpawn": {
+            "x": -1,
+            "y": -1
+        },
+        "doors": [
+            {
+                "position": {"x": 0, "y": 5},
+                "resultantLevel": 0,
+                "resultantPosition": {"x": 18, "y": 2},
+                "buyable": false,
+                "cost": 500
+            }
+        ],
+        "spawns": [
+            {
+                "x": 1,
+                "y": 1
+            },
+            {
+                "x": 4,
+                "y": 2
+            }
+        ]
     },
     "2": {
 
