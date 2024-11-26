@@ -1,37 +1,29 @@
 package TBZ;
 
 import java.util.HashMap;
-import java.awt.event.*;
-import javax.swing.*;
 // local imports 
 import TBZ.world.World;
 import TBZ.world.entity.Entity;
 import TBZ.world.entity.Position;
-import TBZ.world.entity.Directions;
 
-public class Game extends JFrame implements KeyListener {
+public class Game {
     private World world;
     private HashMap<Integer, Entity> entities;
-    private Player player;
     private String prompt;
 
     public Game() {
         this.world = new World("./target/classes/TBZ/levels/test/");
-        this.player = new Player(this.world.getLevel().getPlayerSpawn());
         this.entities = new HashMap<>();
     }    
 
-    public void run() {
-        this.addKeyListener(this);
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setSize(1900, 5);
-        this.setVisible(true);
+    public void setPrompt(String prompt) {
+        this.prompt = prompt;
+    }
 
-        this.spawnEntity(this.player);
-        this.spawnEntity(this.player.getDSprite());
+    public void run() {
+        this.spawnEntity(this.world.getPlayer());
+        this.spawnEntity(this.world.getPlayer().getDSprite());
         while (true) {
-            checkForInteractPrompt();
-            checkForHealthChange();
             world.renderWorld();
             this.renderPrompt();
             // Do nothing for a bit to generate a stable framerate
@@ -44,67 +36,6 @@ public class Game extends JFrame implements KeyListener {
                 this.world.setEntityPosition(entity);
             }
         }
-    }
-
-    // Key Input
-
-    public void keyPressed(KeyEvent e) {
-        int keycode = e.getKeyCode();
-        Position tmpSpawn = this.world.getLevel().getPlayerSpawn();
-
-        Position newPos = new Position(0, 0);
-        switch (keycode) {
-            case KeyEvent.VK_UP:
-                if (this.player.getDirection() == Directions.UP) {
-                    newPos = new Position(0, -1);
-                } else {
-                    player.setDirection(Directions.UP);
-                }
-                break;
-            case KeyEvent.VK_DOWN:
-                if (this.player.getDirection() == Directions.DOWN) {
-                    newPos = new Position(0, 1);
-                } else {
-                    player.setDirection(Directions.DOWN);
-                }
-                break;
-            case KeyEvent.VK_RIGHT:
-                if (this.player.getDirection() == Directions.RIGHT) {
-                    newPos = new Position(1, 0);
-                } else {
-                    player.setDirection(Directions.RIGHT);
-                }
-                break;
-            case KeyEvent.VK_LEFT:
-                if (this.player.getDirection() == Directions.LEFT) {
-                    newPos = new Position(-1, 0);
-                } else {
-                    player.setDirection(Directions.LEFT);
-                }
-                break;
-            case KeyEvent.VK_E:
-                // interact if there is something to interact with
-                this.world.interact(this.player.getDSprite().getPosition());
-
-                // this is shit but it checks if the player spawn has changed.
-                // if it has then it's a new level and we can move the player
-                if (!tmpSpawn.equals(this.world.getLevel().getPlayerSpawn())) {
-                    player.setPlayerPosition(this.world.getLevel().getPlayerSpawn());
-                }
-                break;
-        }
-        // check to make sure player will not collide
-        if (!this.world.willCollide(this.player.getPosition().plus(newPos))) {
-            player.move(newPos.getX(), newPos.getY());
-        }
-    }
-
-    public void keyTyped(KeyEvent e) {
-
-    }
-
-    public void keyReleased(KeyEvent e) {
-
     }
 
     /**
@@ -130,25 +61,25 @@ public class Game extends JFrame implements KeyListener {
 
     }
 
-    public String checkForInteractPrompt() {
-        if (this.world.isInteractable(this.player.getDSprite().getPosition())) {
-            return this.world.interactPrompt(this.player.getDSprite().getPosition());
-        }
-        return "";
-    }
-
     public void renderPrompt() {
-        // TODO - Add player inventory
-        this.prompt = "Health: " + this.player.getHealth() + "%" + " | " + this.player.getPoints() + "\t" + checkForInteractPrompt();
+        String weapon1 = "1 - ";
+        String weapon2 = "2 - ";
+        switch (this.world.getPlayer().getWeaponIndex()) {
+            case 0:
+                weapon1 = "[1] - ";
+                break;
+            case 1:
+                weapon2 = "[2] - ";
+                break;
+            default:
+                weapon1 = "[1] - ";
+                break;
+        }
+        this.setPrompt(
+            "Health: " + this.world.getPlayer().getHealth() + "%" + " | " + this.world.getPlayer().getPoints() + "\t" + this.world.checkForInteractPrompt() + "\n"
+            + weapon1 + this.world.getPlayer().getWeapon(0) + " | " + weapon2 + (this.world.getPlayer().getWeapon(1) != null ? this.world.getPlayer().getWeapon(1) : "")
+        );
 
         System.out.println(this.prompt);
-    }
-
-    // call me stupid for deciding that player should be in Game.java
-    public void checkForHealthChange() {
-        // so much jank because I didn't choose to place player within the World
-        // class
-        if (this.player.getHealth() - 100 == this.world.getHealthAdder()) return;
-        this.player.setHealth(100 + this.world.getHealthAdder());
     }
 }

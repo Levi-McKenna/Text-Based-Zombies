@@ -3,21 +3,30 @@ package TBZ.world;
 import java.util.List;
 import java.io.File;
 import java.util.HashMap;
+import java.awt.event.*;
+import javax.swing.*;
+import TBZ.world.entity.Directions;
+import TBZ.Player;
 // local imports 
 import TBZ.world.entity.Entity;
 import TBZ.world.entity.Position;
 
-public class World {
+public class World extends JFrame implements KeyListener {
     private Level level;
     private List<String> world;
     private String[] levelDirs;
     private Level[] levels;
     private HashMap<Integer, Position> idToPosition;
+    private Player player;
     private int levelIndex;
-    private int healthAdder;
 
     public World(String levelDir) {
-        this.healthAdder = 0;
+        // Key input setup
+        this.addKeyListener(this);
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setSize(1900, 5);
+        this.setVisible(true);
+
         this.levelIndex = 0;
 
         // find all levels
@@ -42,6 +51,8 @@ public class World {
         // base world
         this.world = level.getLevel();
         this.idToPosition = new HashMap<>();
+
+        this.player = new Player(this.getLevel().getPlayerSpawn());
     }
 
     // getters / setters
@@ -50,12 +61,8 @@ public class World {
         return this.level;
     }
 
-    public int getHealthAdder() {
-        return this.healthAdder;
-    }
-
-    public void setHealthAdder(int healthAdder) {
-        this.healthAdder = healthAdder;
+    public Player getPlayer() {
+        return this.player;
     }
 
     public void setLevel() {
@@ -111,6 +118,81 @@ public class World {
         }
         world.set(position.getY(), newLine);
 
+    }
+
+    // Key Input
+
+    public void keyPressed(KeyEvent e) {
+        int keycode = e.getKeyCode();
+        Position tmpSpawn = this.getLevel().getPlayerSpawn();
+
+        Position newPos = new Position(0, 0);
+        switch (keycode) {
+            case KeyEvent.VK_W:
+                if (this.player.getDirection() == Directions.UP) {
+                    newPos = new Position(0, -1);
+                } else {
+                    player.setDirection(Directions.UP);
+                }
+                break;
+            case KeyEvent.VK_S:
+                if (this.player.getDirection() == Directions.DOWN) {
+                    newPos = new Position(0, 1);
+                } else {
+                    player.setDirection(Directions.DOWN);
+                }
+                break;
+            case KeyEvent.VK_D:
+                if (this.player.getDirection() == Directions.RIGHT) {
+                    newPos = new Position(1, 0);
+                } else {
+                    player.setDirection(Directions.RIGHT);
+                }
+                break;
+            case KeyEvent.VK_A:
+                if (this.player.getDirection() == Directions.LEFT) {
+                    newPos = new Position(-1, 0);
+                } else {
+                    player.setDirection(Directions.LEFT);
+                }
+                break;
+            case KeyEvent.VK_E:
+                // interact if there is something to interact with
+                this.interact(this.player.getDSprite().getPosition());
+
+                // this is shit but it checks if the player spawn has changed.
+                // if it has then it's a new level and we can move the player
+                if (!tmpSpawn.equals(this.getLevel().getPlayerSpawn())) {
+                    player.setPlayerPosition(this.getLevel().getPlayerSpawn());
+                }
+                break;
+            case KeyEvent.VK_1:
+                // switch to weapon 1
+                this.player.setWeaponIndex(0);
+                break;
+            case KeyEvent.VK_2:
+                this.player.setWeaponIndex(1);
+                break;
+        }
+        // check to make sure player will not collide
+        if (!this.willCollide(this.player.getPosition().plus(newPos))) {
+            player.move(newPos.getX(), newPos.getY());
+        }
+    }
+
+    public void keyTyped(KeyEvent e) {
+
+    }
+
+    public void keyReleased(KeyEvent e) {
+
+    }
+
+    public String checkForInteractPrompt() {
+        if (this.isInteractable(this.player.getDSprite().getPosition())) {
+            return this.interactPrompt(this.player.getDSprite().getPosition());
+        }
+        return "";
     }
 
     private boolean isObstacle(char character) {
@@ -169,13 +251,28 @@ public class World {
                 interactPerk(perk);
                 perk.vend();
                 this.level.setInteractables(position, perk);
+            } else if (interactable instanceof Weapon) {
+                Weapon weapon = (Weapon) interactable;
+                interactWeapon(weapon);
+                weapon.equip();
+                this.level.setInteractables(position, weapon);
             }
             return;
         }
     }
 
+    private void interactWeapon(Weapon weapon) {
+        for (int i = 0; i < this.player.getWeapons().length; i++) {
+            if (this.player.getWeapons()[i] == null) {
+                this.player.setWeapon(i, weapon.getWeapon());
+                return;
+            }
+        }
+        this.player.setCurrentWeapon(weapon.getWeapon());
+    }
+
     private void interactPerk(Perk perk) {
-        this.setHealthAdder(this.getHealthAdder() + perk.getHealthMultiplier());
+        this.player.addHealth(perk.getHealthMultiplier());
     }
 
     private void interactDoor(Door door) {
@@ -187,36 +284,4 @@ public class World {
 
         this.level.setPlayerSpawn(door.getResultantPosition());
     }
-
-
-    // problems:
-    // public void moveEntity(List<String> world, Position position) {
-    //     int x = this.getPosition().getX();
-    //     int y = this.getPosition().getY();
-
-    //     // reset original position
-    //     char[] prevLineToMutate = world.get(y).toCharArray();
-    //     prevLineToMutate[x] = ' ';
-
-    //     // i know this is shit but it works alright? fuck java
-    //     String newLine = "";
-    //     for (char character : prevLineToMutate) {
-    //         newLine = newLine + character;
-    //     }
-    //     world.set(y, newLine);
-
-    //     // set new position
-    //     // TODO - Check if position is valid
-    //     this.setPosition(position);
-    //     x = this.getPosition().getX();
-    //     y = this.getPosition().getY();
-
-    //     lineToMutate[x] = this.getSprite();
-
-    //     newLine = "";
-    //     for (char character : prevLineToMutate) {
-    //         newLine = newLine + character;
-    //     }
-    //     world.set(y, newLine);
-    // }
 }
