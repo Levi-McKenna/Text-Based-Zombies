@@ -22,7 +22,8 @@
                 "x": 4,
                 "y": 2
             }
-        ]
+        ],
+        "perks": []
     },
     "1": {
         "playerSpawn": {
@@ -46,6 +47,13 @@
             {
                 "x": 4,
                 "y": 2
+            }
+        ],
+        "perks": [
+            {
+                "position": {"x": 23, "y": 3},
+                "perkType": "Juggernog",
+                "cost": 2500
             }
         ]
     },

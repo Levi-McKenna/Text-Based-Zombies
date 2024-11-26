@@ -31,6 +31,7 @@ public class Game extends JFrame implements KeyListener {
         this.spawnEntity(this.player.getDSprite());
         while (true) {
             checkForInteractPrompt();
+            checkForHealthChange();
             world.renderWorld();
             this.renderPrompt();
             // Do nothing for a bit to generate a stable framerate
@@ -141,5 +142,13 @@ public class Game extends JFrame implements KeyListener {
         this.prompt = "Health: " + this.player.getHealth() + "%" + " | " + this.player.getPoints() + "\t" + checkForInteractPrompt();
 
         System.out.println(this.prompt);
+    }
+
+    // call me stupid for deciding that player should be in Game.java
+    public void checkForHealthChange() {
+        // so much jank because I didn't choose to place player within the World
+        // class
+        if (this.player.getHealth() - 100 == this.world.getHealthAdder()) return;
+        this.player.setHealth(100 + this.world.getHealthAdder());
     }
 }

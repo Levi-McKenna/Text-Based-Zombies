@@ -14,7 +14,6 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 // local imports
 import TBZ.world.entity.Position;
-import TBZ.world.Door;
 
 public class Level {
     public final List<String> level;
@@ -26,6 +25,7 @@ public class Level {
     public Level(String levelPath, String metaPath, int levelIndex) {
         this.level = Level.loadLevel(levelPath);
         this.bounds = new Position(this.level.get(0).length(), this.level.size());
+        this.interactables = new HashMap<Position, Interactable>();
         this.parseMetadata(metaPath, levelIndex);
     }
 
@@ -43,6 +43,10 @@ public class Level {
         return this.interactables;
     }
 
+    public void setInteractables(Position key, Interactable value) {
+        this.interactables.put(key, value);
+    }
+
     public void setPlayerSpawn(Position position) {
         this.playerSpawn = position;
     }
@@ -52,7 +56,6 @@ public class Level {
     }
 
     public void buyInteractable(Position position) {
-        // DEV - this might check reference equality
         this.interactables.get(position).buy();
     }
 
@@ -115,9 +118,31 @@ public class Level {
                 this.enemySpawns[i] = position;
             }
 
-            // set all doors
+            // set all doors for interactables map
             JSONArray doors = levelObj.getJSONArray("doors");
-            this.interactables = new HashMap<Position, Interactable>();
+            this.setDoorInteractables(doors);
+
+            // set all perks for interactables map
+            JSONArray perks = levelObj.getJSONArray("perks");
+            this.setPerkInteractables(perks);
+            
+            // maybe? : 
+            //// check if level is valid -  
+            //// if any of the lengths are not equal, it's invalid
+            //int tmpLength = level[1].length();
+            //for (int i = 1; i < level.length; i++) {
+            //    if (tmpLength != level[i].length()) {
+            //        String[] errorReport = {"Error - Invalid level format"};
+            //        return errorReport;
+            //    } else tmpLength = level[i].length();
+            //}
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void setDoorInteractables(JSONArray doors) {
             for (int i = 0; i < doors.length(); i++) {
                 JSONObject door = doors.getJSONObject(i);
                 // find key of type Position
@@ -134,21 +159,23 @@ public class Level {
 
                 this.interactables.put(key, value);
             }
+    }
 
+    private void setPerkInteractables(JSONArray perks) {
+            for (int i = 0; i < perks.length(); i++) {
+                JSONObject perk = perks.getJSONObject(i);
+                // find key of type position
+                JSONObject position = perk.getJSONObject("position");
+                Position key = new Position(position.getInt("x"), position.getInt("y"));
+                // initialize value of type perk
+                int cost = perk.getInt("cost");
+                // DEV - Hard coded because only jug is implemented
+                int healthMultiplier = 25;
+                String perkType = perk.getString("perkType");
+                
+                Perk value = new Perk(healthMultiplier, cost, perkType);
 
-            // maybe? : 
-            //// check if level is valid -  
-            //// if any of the lengths are not equal, it's invalid
-            //int tmpLength = level[1].length();
-            //for (int i = 1; i < level.length; i++) {
-            //    if (tmpLength != level[i].length()) {
-            //        String[] errorReport = {"Error - Invalid level format"};
-            //        return errorReport;
-            //    } else tmpLength = level[i].length();
-            //}
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+                this.interactables.put(key, value);
+            }
     }
 }
