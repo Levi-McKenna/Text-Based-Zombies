@@ -14,8 +14,10 @@ public class World {
     private Level[] levels;
     private HashMap<Integer, Position> idToPosition;
     private int levelIndex;
+    private int healthAdder;
 
     public World(String levelDir) {
+        this.healthAdder = 0;
         this.levelIndex = 0;
 
         // find all levels
@@ -46,6 +48,14 @@ public class World {
 
     public Level getLevel() {
         return this.level;
+    }
+
+    public int getHealthAdder() {
+        return this.healthAdder;
+    }
+
+    public void setHealthAdder(int healthAdder) {
+        this.healthAdder = healthAdder;
     }
 
     public void setLevel() {
@@ -154,10 +164,18 @@ public class World {
             this.level.buyInteractable(position);
         } else {
             if (interactable instanceof Door) interactDoor((Door) interactable);
+            else if (interactable instanceof Perk) {
+                Perk perk = (Perk) interactable;
+                interactPerk(perk);
+                perk.vend();
+                this.level.setInteractables(position, perk);
+            }
             return;
         }
+    }
 
-        // TODO - for other interactables
+    private void interactPerk(Perk perk) {
+        this.setHealthAdder(this.getHealthAdder() + perk.getHealthMultiplier());
     }
 
     private void interactDoor(Door door) {
