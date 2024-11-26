@@ -95,7 +95,6 @@ public class Level {
         return errorReport;
     }
 
-    // TODO - We also need some metadata for spawns, etc.
     private void parseMetadata(String metaPath, int levelIndex) {
         try {
             File reader = new File(metaPath);
@@ -125,20 +124,43 @@ public class Level {
             // set all perks for interactables map
             JSONArray perks = levelObj.getJSONArray("perks");
             this.setPerkInteractables(perks);
-            
-            // maybe? : 
-            //// check if level is valid -  
-            //// if any of the lengths are not equal, it's invalid
-            //int tmpLength = level[1].length();
-            //for (int i = 1; i < level.length; i++) {
-            //    if (tmpLength != level[i].length()) {
-            //        String[] errorReport = {"Error - Invalid level format"};
-            //        return errorReport;
-            //    } else tmpLength = level[i].length();
-            //}
 
+            // set all wall buys
+            JSONArray weapons = levelObj.getJSONArray("weapons");
+            this.setWeaponInteractables(weapons);
+            
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    private void setWeaponInteractables(JSONArray weapons) {
+        for (int i = 0; i < weapons.length(); i++) {
+            JSONObject weapon = weapons.getJSONObject(i);
+            // find key of type Position
+            JSONObject position = weapon.getJSONObject("position");
+            Position key = new Position(position.getInt("x"), position.getInt("y"));
+            // intialize value of type Weapon
+            int cost = weapon.getInt("cost");
+            String weaponTypeS = weapon.getString("weapon");
+            Weapons weaponType;
+            switch (weaponTypeS) {
+                case "PISTOL":
+                    weaponType = Weapons.PISTOL;
+                    break;
+                case "M14":
+                    weaponType = Weapons.M14;
+                    break;
+                case "Olympia":
+                    weaponType = Weapons.OLYMPIA;
+                    break;
+                default:
+                    weaponType = Weapons.PISTOL;
+                    break;
+            }
+            Weapon value = new Weapon(cost, weaponType);
+
+            this.interactables.put(key, value);
         }
     }
 

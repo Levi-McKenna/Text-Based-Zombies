@@ -1,11 +1,11 @@
 /home/lmckenna/Code/JavaHell2/TBZ/src/main/java/TBZ/App.java
 /home/lmckenna/Code/JavaHell2/TBZ/src/main/java/TBZ/Game.java
 /home/lmckenna/Code/JavaHell2/TBZ/src/main/java/TBZ/Player.java
-/home/lmckenna/Code/JavaHell2/TBZ/src/main/java/TBZ/TBZ.java
 /home/lmckenna/Code/JavaHell2/TBZ/src/main/java/TBZ/world/Door.java
 /home/lmckenna/Code/JavaHell2/TBZ/src/main/java/TBZ/world/Interactable.java
 /home/lmckenna/Code/JavaHell2/TBZ/src/main/java/TBZ/world/Level.java
 /home/lmckenna/Code/JavaHell2/TBZ/src/main/java/TBZ/world/Perk.java
+/home/lmckenna/Code/JavaHell2/TBZ/src/main/java/TBZ/world/Weapon.java
 /home/lmckenna/Code/JavaHell2/TBZ/src/main/java/TBZ/world/Weapons.java
 /home/lmckenna/Code/JavaHell2/TBZ/src/main/java/TBZ/world/World.java
 /home/lmckenna/Code/JavaHell2/TBZ/src/main/java/TBZ/world/entity/Directions.java
