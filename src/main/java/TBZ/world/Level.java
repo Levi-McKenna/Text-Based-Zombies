@@ -43,6 +43,10 @@ public class Level {
         return this.interactables;
     }
 
+    public Position[] getEnemySpawns() {
+        return this.enemySpawns;
+    }
+
     public void setInteractables(Position key, Interactable value) {
         this.interactables.put(key, value);
     }

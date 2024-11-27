@@ -1,6 +1,10 @@
 package TBZ;
 
 import java.util.HashMap;
+import java.util.Random;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 // local imports 
 import TBZ.world.World;
 import TBZ.world.entity.Entity;
@@ -23,9 +27,48 @@ public class Game {
     public void run() {
         this.spawnEntity(this.world.getPlayer());
         this.spawnEntity(this.world.getPlayer().getDSprite());
+
+        // zombie spawning
+        ExecutorService executor = Executors.newFixedThreadPool(2);
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                while (true) {
+                    Random random = new Random();
+                    int randIndex = random.nextInt(world.getLevel().getEnemySpawns().length);
+                    Position randSpawn = world.getLevel().getEnemySpawns()[randIndex];
+                    Zombie zombie = new Zombie(randSpawn);
+                    spawnEntity(zombie);
+                    try {
+                        Thread.sleep(10000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+
+
         while (true) {
             world.renderWorld();
             this.renderPrompt();
+            // Zombie movement
+            executor.execute(new Runnable() {
+                @Override
+                public void run() {
+                    for (Entity entity : entities.values()) {
+                        if (entity instanceof Zombie) {
+                            Zombie zombie = (Zombie) entity;
+                            zombie.move(zombie.findBestPath(world.getPlayer().getPosition()));
+                        }
+                    }
+                    try {
+                        Thread.sleep(750);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
             // Do nothing for a bit to generate a stable framerate
             try {
                 Thread.sleep(5);

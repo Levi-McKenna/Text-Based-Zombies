@@ -101,7 +101,6 @@ public class World extends JFrame implements KeyListener {
             setWorldChar(entity.getPosition(), entity.getSprite());
         // remove entity from world
         } else {
-            setWorldChar(this.idToPosition.get(entity.getID()), ' ');
             this.idToPosition.remove(entity.getID());
         }
     }
@@ -109,6 +108,8 @@ public class World extends JFrame implements KeyListener {
     private void setWorldChar(Position position, char sprite) {
         char[] lineToMutate = this.world.get(position.getY()).toCharArray();
         if (!isObstacle(lineToMutate[position.getX()]) || isPlayer(lineToMutate[position.getX()])) {
+            lineToMutate[position.getX()] = sprite;
+        } else if (isZombie(lineToMutate[position.getX()]) && !isPlayer(sprite)) {
             lineToMutate[position.getX()] = sprite;
         }
 
@@ -207,6 +208,11 @@ public class World extends JFrame implements KeyListener {
 
     public boolean isPlayer(char character) {
         if (character == '*') return true;
+        return false;
+    }
+
+    public boolean isZombie(char character) {
+        if (character == '@') return true;
         return false;
     }
 
