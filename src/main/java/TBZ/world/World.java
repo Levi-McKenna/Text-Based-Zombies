@@ -7,6 +7,7 @@ import java.awt.event.*;
 import javax.swing.*;
 import TBZ.world.entity.Directions;
 import TBZ.Player;
+import TBZ.Zombie;
 // local imports 
 import TBZ.world.entity.Entity;
 import TBZ.world.entity.Position;
@@ -16,9 +17,11 @@ public class World extends JFrame implements KeyListener {
     private List<String> world;
     private String[] levelDirs;
     private Level[] levels;
+    private HashMap<Integer, Entity> entities;
     private HashMap<Integer, Position> idToPosition;
     private Player player;
     private int levelIndex;
+    private boolean clearEntities;
 
     public World(String levelDir) {
         // Key input setup
@@ -50,8 +53,10 @@ public class World extends JFrame implements KeyListener {
         this.levels[levelIndex] = tmpLevel;
         // base world
         this.world = level.getLevel();
+        this.entities = new HashMap<>();
         this.idToPosition = new HashMap<>();
 
+        this.clearEntities = false;
         this.player = new Player(this.getLevel().getPlayerSpawn());
     }
 
@@ -65,7 +70,21 @@ public class World extends JFrame implements KeyListener {
         return this.player;
     }
 
+    public HashMap<Integer, Entity> getEntities() {
+        return this.entities;
+    }
+
+    public boolean getClearEntities() {
+        return this.clearEntities;
+    }
+
     public void setLevel() {
+        // remove all zombies from level
+        for (Entity entity : this.getEntities().values()) {
+            if (entity instanceof Zombie) {
+                this.removeEntity(entity.getID());
+            }
+        }
         if (levels[levelIndex] != null) {
             this.level = levels[levelIndex];
             return;
@@ -84,8 +103,31 @@ public class World extends JFrame implements KeyListener {
         this.levels[levelIndex] = this.level;
     }
 
+    public void setClearEntities(boolean bool) {
+        this.clearEntities = bool;
+    }
+
     public void setLevelIndex(int index) {
         this.levelIndex = index;
+    }
+
+    /**
+     * finds line to change and swaps the position with the entity 
+     *
+     * @param entity entity to spawn
+     */
+    public void spawnEntity(Entity entity) {
+        // be sure to set the ID of the thang of course
+        entity.setID(this.entities);
+        this.setEntityPosition(entity);
+        this.entities.put(entity.getID(), entity);
+    }
+
+    public void removeEntity(int id) {
+        this.entities.get(id).setPosition(new Position(-1, -1));
+        this.setEntityPosition(this.entities.get(id));
+        // if this doesnt work then kill me
+        this.entities.remove(id);
     }
 
     public void setEntityPosition(Entity entity) {
@@ -216,7 +258,6 @@ public class World extends JFrame implements KeyListener {
         return false;
     }
 
-    // TODO - this needs to render all prompts and entities
     public void renderWorld() {
         // clear screen
         System.out.print("\033[H\033[2J");
@@ -278,7 +319,7 @@ public class World extends JFrame implements KeyListener {
     }
 
     private void interactPerk(Perk perk) {
-        this.player.addHealth(perk.getHealthMultiplier());
+        this.player.addMaxHealth(perk.getHealthMultiplier());
     }
 
     private void interactDoor(Door door) {
@@ -289,5 +330,13 @@ public class World extends JFrame implements KeyListener {
         this.setWorld();
 
         this.level.setPlayerSpawn(door.getResultantPosition());
+    }
+
+    public void healPlayer(int health) {
+        this.player.addHealth(health);
+    }
+
+    public void damagePlayer(int damage) {
+        this.player.subtractHealth(damage);
     }
 }

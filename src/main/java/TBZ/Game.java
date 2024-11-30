@@ -2,6 +2,8 @@ package TBZ;
 
 import java.util.HashMap;
 import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -12,12 +14,10 @@ import TBZ.world.entity.Position;
 
 public class Game {
     private World world;
-    private HashMap<Integer, Entity> entities;
     private String prompt;
 
     public Game() {
         this.world = new World("./target/classes/TBZ/levels/test/");
-        this.entities = new HashMap<>();
     }    
 
     public void setPrompt(String prompt) {
@@ -25,8 +25,8 @@ public class Game {
     }
 
     public void run() {
-        this.spawnEntity(this.world.getPlayer());
-        this.spawnEntity(this.world.getPlayer().getDSprite());
+        this.world.spawnEntity(this.world.getPlayer());
+        this.world.spawnEntity(this.world.getPlayer().getDSprite());
 
         // zombie spawning
         ExecutorService executor = Executors.newFixedThreadPool(2);
@@ -34,16 +34,16 @@ public class Game {
             @Override
             public void run() {
                 while (true) {
-                    Random random = new Random();
-                    int randIndex = random.nextInt(world.getLevel().getEnemySpawns().length);
-                    Position randSpawn = world.getLevel().getEnemySpawns()[randIndex];
-                    Zombie zombie = new Zombie(randSpawn);
-                    spawnEntity(zombie);
                     try {
                         Thread.sleep(10000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
+                    Random random = new Random();
+                    int randIndex = random.nextInt(world.getLevel().getEnemySpawns().length);
+                    Position randSpawn = world.getLevel().getEnemySpawns()[randIndex];
+                    Zombie zombie = new Zombie(randSpawn);
+                    world.spawnEntity(zombie);
                 }
             }
         });
@@ -52,18 +52,36 @@ public class Game {
         while (true) {
             world.renderWorld();
             this.renderPrompt();
-            // Zombie movement
+            // Zombie movement & damage
             executor.execute(new Runnable() {
                 @Override
                 public void run() {
-                    for (Entity entity : entities.values()) {
+                    // Timer timer = new Timer();
+
+                    // TimerTask task = new TimerTask() {
+                    //     @Override
+                    //     public void run() {
+                    //         if (world.getPlayer().getHealth() != world.getPlayer().getMaxHealth()) {
+                    //             world.healPlayer(25);
+                    //             try {
+                    //                 Thread.sleep(250);
+                    //             } catch (InterruptedException e) {
+                    //                 e.printStackTrace();
+                    //             }
+                    //         }
+                    //     }
+                    // };
+                    for (Entity entity : world.getEntities().values()) {
                         if (entity instanceof Zombie) {
                             Zombie zombie = (Zombie) entity;
                             zombie.move(zombie.findBestPath(world.getPlayer().getPosition()));
+                            if (zombie.closeToTarget(world.getPlayer().getPosition())) {
+                                world.damagePlayer(10);
+                            }
                         }
                     }
                     try {
-                        Thread.sleep(750);
+                        Thread.sleep(900);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -75,30 +93,12 @@ public class Game {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            for (Entity entity : entities.values()) {
+            for (Entity entity : world.getEntities().values()) {
                 this.world.setEntityPosition(entity);
             }
         }
     }
 
-    /**
-     * finds line to change and swaps the position with the entity 
-     *
-     * @param entity entity to spawn
-     */
-    public void spawnEntity(Entity entity) {
-        // be sure to set the ID of the thang of course
-        entity.setID(this.entities);
-        this.world.setEntityPosition(entity);
-        this.entities.put(entity.getID(), entity);
-    }
-
-    public void removeEntity(int id) {
-        this.entities.get(id).setPosition(new Position(-1, -1));
-        this.world.setEntityPosition(this.entities.get(id));
-        // if this doesnt work then kill me
-        this.entities.remove(id);
-    }
 
     public void printMainMenu() {
 
