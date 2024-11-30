@@ -4,10 +4,21 @@ import TBZ.world.entity.Entity;
 import TBZ.world.entity.Position;
 
 public class Zombie extends Entity {
+    private int damage;
+
     public Zombie(Position spawn) {
         this.setPosition(spawn);
         this.setHealth(100);
         this.setSprite('@');
+        this.setDamage(25);
+    }
+
+    public int getDamage() {
+        return this.damage;
+    }
+
+    public void setDamage(int damage) {
+        this.damage = damage;
     }
 
     public Position findBestPath(Position tVec) {
@@ -26,6 +37,12 @@ public class Zombie extends Entity {
         if (absDX == 1 && absDY == 1) y = dY / absDY;
 
         return new Position(x, y);
+    }
+
+    public boolean closeToTarget(Position tVec) {
+        Position path = this.findBestPath(tVec);
+        if (path.getX() == 0 && path.getY() == 0) return true;
+        return false;
     }
 
     public void move(Position vector) {

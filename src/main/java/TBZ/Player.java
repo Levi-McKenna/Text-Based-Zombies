@@ -13,12 +13,14 @@ public class Player extends Entity {
     private int points;
     private Weapons[] weapons;
     private int weaponIndex;
+    private int maxHealth;
 
 
     public Player(Position position) {
         this.setSprite('*');
         this.setPosition(position);
         this.setHealth(100);
+        this.setMaxHealth(100);
         this.setPoints(0);
         this.weapons = new Weapons[2];
         this.setWeapon(0, Weapons.PISTOL);
@@ -53,6 +55,14 @@ public class Player extends Entity {
         return this.weaponIndex;
     }
 
+    public int getMaxHealth() {
+        return this.maxHealth;
+    }
+
+    private void setMaxHealth(int maxHealth) {
+        this.maxHealth = maxHealth;
+    }
+
     public void setWeaponIndex(int index) {
         this.weaponIndex = index;
     }
@@ -78,8 +88,17 @@ public class Player extends Entity {
         this.setHealth(this.getHealth() + health);
     }
 
+    public void addMaxHealth(int health) {
+        this.setHealth(this.getMaxHealth() + health);
+        this.setMaxHealth(this.getMaxHealth() + health);
+    }
+
     public void subtractHealth(int health) {
-        this.setHealth(this.getHealth() - health);
+        if (this.getHealth() - health <= 0) {
+            this.setHealth(0);
+        } else {
+            this.setHealth(this.getHealth() - health);
+        }
     }
 
     public void setDirection(Directions direction) {
