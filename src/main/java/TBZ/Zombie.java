@@ -3,6 +3,12 @@ package TBZ;
 import TBZ.world.entity.Entity;
 import TBZ.world.entity.Position;
 
+/**
+ * @author LMcKenna
+ * @version 12.1.24
+ *
+ * Represents enemy type zombie 
+ */
 public class Zombie extends Entity {
     private int damage;
 
@@ -21,6 +27,11 @@ public class Zombie extends Entity {
         this.damage = damage;
     }
 
+    /**
+     * VERY basic pathing to a specified position 
+     *
+     * @param tVec target position 
+     */
     public Position findBestPath(Position tVec) {
         Position curPos = this.getPosition();
         int dX = tVec.getX() - curPos.getX();
@@ -39,12 +50,22 @@ public class Zombie extends Entity {
         return new Position(x, y);
     }
 
+    /**
+     * check if zombie is close to target position 
+     *
+     * @param tVec target position 
+     */
     public boolean closeToTarget(Position tVec) {
         Position path = this.findBestPath(tVec);
         if (path.getX() == 0 && path.getY() == 0) return true;
         return false;
     }
 
+    /** 
+     * moves zombie to by position 
+     *
+     * @param vector the amount to move 
+     */
     public void move(Position vector) {
         this.setPosition(this.getPosition().plus(vector));
     }

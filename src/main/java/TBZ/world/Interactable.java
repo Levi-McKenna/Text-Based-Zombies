@@ -1,5 +1,11 @@
 package TBZ.world;
 
+/**
+ * @author LMcKenna
+ * @version 12.1.24
+ *
+ * Abstract class for default implementations of all interactable items 
+ */
 public abstract class Interactable {
     private boolean buyable;
     private int cost;
@@ -29,6 +35,9 @@ public abstract class Interactable {
         this.prompt = prompt;
     }
 
+    /**
+     * deafault buy implementation 
+     */
     public void buy() {
         setBuyable(false);
     }

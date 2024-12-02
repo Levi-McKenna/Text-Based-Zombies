@@ -3,6 +3,12 @@ package TBZ.world;
 // local imports
 import TBZ.world.entity.Position;
 
+/**
+ * @author LMcKenna
+ * @version 12.1.24
+ *
+ * Represents door interactable 
+ */
 public class Door extends Interactable {
     public final Position resultantPosition;
     public final int resultantLevelIndex;
@@ -29,6 +35,9 @@ public class Door extends Interactable {
         } else this.setPrompt("Press E to enter room");
     } 
 
+    /**
+     * sets the prompt and sets its buyable status
+    */
     @Override
     public void buy() {
         this.setBuyable(false);

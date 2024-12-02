@@ -1,8 +1,13 @@
 package TBZ.world.entity;
 
-import java.util.Collections;
 import java.util.HashMap;
 
+/**
+ * @author LMcKenna
+ * @version 12.1.24
+ *
+ * Abstract class to implement on entity types 
+ */
 public abstract class Entity {
     // fields
     private int id;
@@ -42,12 +47,26 @@ public abstract class Entity {
         this.sprite = sprite;
     }
 
+    /**
+     * Generates an id one more than the greatest id within the map of entities 
+     *
+     * @param entities all current ids to entities 
+     */
     public static int generateID(HashMap<Integer, Entity> entities) {
         // checks to see if it contains the first id, if so generate a new one
-        if (entities.containsKey(1)) return Collections.max(entities.keySet())+1;
-        return 1;
+        int tmp = 0;
+        for (int num : entities.keySet()) {
+            if (num > tmp) tmp = num;
+        }
+        return tmp + 1;
     }
 
+    /**
+     * default move implementation 
+     *
+     * @param x x to move 
+     * @param y y to move 
+     */
     public void move(int x, int y) {
         int newX = this.getPosition().getX() + x;
         int newY = this.getPosition().getY() + y;
@@ -55,6 +74,11 @@ public abstract class Entity {
         this.setPosition(new Position(newX, newY));
     }
 
+    /** 
+     * default implementation for subtracting health 
+     *
+     * @param subtrahend amount to subtract 
+     */
     public void substractHealth(int subtrahend) {
         if (this.getHealth() > subtrahend) {
             this.setHealth(this.getHealth() - subtrahend);

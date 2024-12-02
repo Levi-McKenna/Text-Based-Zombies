@@ -15,6 +15,12 @@ import java.util.HashMap;
 // local imports
 import TBZ.world.entity.Position;
 
+/**
+ * @author LMcKenna
+ * @version 12.1.24 
+ *
+ * Represents a level and its modifications and all of its metadata 
+ */
 public class Level {
     public final List<String> level;
     public final Position bounds;
@@ -45,6 +51,10 @@ public class Level {
 
     public Position[] getEnemySpawns() {
         return this.enemySpawns;
+    }
+
+    public Position getBounds() {
+        return this.bounds;
     }
 
     public void setInteractables(Position key, Interactable value) {
@@ -99,6 +109,12 @@ public class Level {
         return errorReport;
     }
 
+    /**
+     * parses json metadata for level 
+     *
+     * @param metaPath the path to json metadata file 
+     * @param current levelIndex 
+     */
     private void parseMetadata(String metaPath, int levelIndex) {
         try {
             File reader = new File(metaPath);
@@ -138,6 +154,11 @@ public class Level {
         }
     }
 
+    /**
+     * implementation for setting weapon interactables 
+     *
+     * @param weapons JSONArray of all weapons 
+     */
     private void setWeaponInteractables(JSONArray weapons) {
         for (int i = 0; i < weapons.length(); i++) {
             JSONObject weapon = weapons.getJSONObject(i);
@@ -168,6 +189,11 @@ public class Level {
         }
     }
 
+    /**
+     * implementation for setting all door interactables 
+     *
+     * @param doors JSONArray json of door data 
+     */
     private void setDoorInteractables(JSONArray doors) {
             for (int i = 0; i < doors.length(); i++) {
                 JSONObject door = doors.getJSONObject(i);
@@ -187,6 +213,11 @@ public class Level {
             }
     }
 
+    /**
+     * implementation for setting all perk interactables 
+     *
+     * @param perks JSONArray json of perk data 
+     */
     private void setPerkInteractables(JSONArray perks) {
             for (int i = 0; i < perks.length(); i++) {
                 JSONObject perk = perks.getJSONObject(i);
