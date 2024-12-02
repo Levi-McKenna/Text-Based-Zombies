@@ -1,5 +1,11 @@
 package TBZ.world;
 
+/**
+ * @author LMcKenna
+ * @version 12.1.24
+ * 
+ * Represents weapon wall buy interactable 
+*/
 public class Weapon extends Interactable {
     Weapons weapon;
 
@@ -31,6 +37,9 @@ public class Weapon extends Interactable {
         this.setPrompt();
     }
 
+    /**
+     * sets the prompt and sets its buyable status
+    */
     @Override
     public void buy() {
         this.setBuyable(false);

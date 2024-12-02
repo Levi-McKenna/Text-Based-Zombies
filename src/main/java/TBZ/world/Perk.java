@@ -1,5 +1,11 @@
 package TBZ.world;
 
+/**
+ * @author LMcKenna
+ * @version 12.1.24 
+ * 
+ * Represents all perk interactables 
+*/
 public class Perk extends Interactable{
     // Perks perkType;
     int healthMultiplier;
@@ -35,6 +41,9 @@ public class Perk extends Interactable{
         } else this.setPrompt("Press E to vend " + this.getPerkType());
     }
 
+    /**
+     * Overloaded buy that multiplies cost by two and sets prompt 
+     */
     @Override
     public void buy() {
         this.setCost(this.getCost() * 2);
@@ -42,6 +51,9 @@ public class Perk extends Interactable{
         this.setPrompt();
     }
 
+    /**
+     * sets prompt and makes the perk buyable again 
+     */
     public void vend() {
         this.setBuyable(true);
         this.setPrompt();

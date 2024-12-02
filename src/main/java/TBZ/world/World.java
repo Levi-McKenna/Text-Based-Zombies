@@ -1,7 +1,9 @@
 package TBZ.world;
 
 import java.util.List;
+import java.util.Set;
 import java.io.File;
+import java.util.Collections;
 import java.util.HashMap;
 import java.awt.event.*;
 import javax.swing.*;
@@ -21,8 +23,12 @@ public class World extends JFrame implements KeyListener {
     private HashMap<Integer, Position> idToPosition;
     private Player player;
     private int levelIndex;
-    private boolean clearEntities;
 
+    /**
+     * @param levelDir directory of world 
+     *
+     * Initializes instance 
+     */
     public World(String levelDir) {
         // Key input setup
         this.addKeyListener(this);
@@ -56,33 +62,67 @@ public class World extends JFrame implements KeyListener {
         this.entities = new HashMap<>();
         this.idToPosition = new HashMap<>();
 
-        this.clearEntities = false;
         this.player = new Player(this.getLevel().getPlayerSpawn());
     }
 
     // getters / setters
 
+    /** 
+     * @return the current level of the world 
+     *
+     * returns the current level of the world 
+     */
     public Level getLevel() {
         return this.level;
     }
 
+    /** 
+     * @return the player 
+     *
+     * returns the current instance of Player 
+     */
     public Player getPlayer() {
         return this.player;
     }
 
+    /** 
+     * @return map of all ids to entities 
+     *
+     * returns entities 
+     */
     public HashMap<Integer, Entity> getEntities() {
         return this.entities;
     }
 
-    public boolean getClearEntities() {
-        return this.clearEntities;
+    /** 
+     * @param id id of entity
+     * @return entity of id 
+     *
+     * returns entity with id 
+     */
+    public Entity getEntityByID(int id) {
+        if (this.getEntities().get(id) != null) return this.getEntities().get(id);
+        return null;
     }
 
+    /**
+     * sets current level to level of the current levelIndex 
+     */
     public void setLevel() {
         // remove all zombies from level
-        for (Entity entity : this.getEntities().values()) {
-            if (entity instanceof Zombie) {
-                this.removeEntity(entity.getID());
+            // this is weird but for lack of time: this prevents a for each loop
+            // from panicking from a missing key in a reference (WHICH IS WACK. I
+            // THOUGHT JAVA WOULD RETURN A CLONE OF THE VALUE. NOT A REFERENCE
+            // TO THE OBJECT???? HELLO???? I MEAN I GUESS THAT WOULD BE WORSE
+            // MEMORY MANAGEMENT BUT ISNT THAT THE WHOLE POINT OF HAVING GETTERS
+            // AND SETTERS?? TO PREVENT ILLEGAL MUTATIONS OF PRIVATE VALUES??
+            // WHY DO I GET A REFERENCE?? IS IT BECAUSE I'M NOT ASSIGNING IT. IT
+            // IS NOT BECAUSE OF ASSIGNMENT. WHAT THE FLIP JAVA. WHAT IS THIS
+            // SHIT. WHATT?????????? YOU ONLY RETURN A REFERENCE TO OBJECT.
+            // PROBABLY AN IMMUTABLE ONE??? I HOPE)
+        for (int id = 0; id <= Collections.max(this.getEntities().keySet()); id++) {
+            if (this.getEntityByID(id) != null && this.getEntityByID(id) instanceof Zombie) {
+                this.removeEntity(id);
             }
         }
         if (levels[levelIndex] != null) {
@@ -95,18 +135,25 @@ public class World extends JFrame implements KeyListener {
         this.level = level;
     }
 
+    /** 
+     * sets world to current level 
+     */
     private void setWorld() {
         this.world = this.level.getLevel();
     }
 
+    /**
+     * sets the level in the field levels to the updated modified level 
+     */
     private void updateLevels() {
         this.levels[levelIndex] = this.level;
     }
 
-    public void setClearEntities(boolean bool) {
-        this.clearEntities = bool;
-    }
-
+    /**
+     * @param index index to set 
+     *
+     * sets index of level 
+     */
     public void setLevelIndex(int index) {
         this.levelIndex = index;
     }
@@ -123,6 +170,11 @@ public class World extends JFrame implements KeyListener {
         this.entities.put(entity.getID(), entity);
     }
 
+    /** 
+     * @param id id of entity to remove 
+     *
+     * removes entity of id 
+     */
     public void removeEntity(int id) {
         this.entities.get(id).setPosition(new Position(-1, -1));
         this.setEntityPosition(this.entities.get(id));
@@ -130,6 +182,11 @@ public class World extends JFrame implements KeyListener {
         this.entities.remove(id);
     }
 
+    /** 
+     * @param entity 
+     *
+     * sets all entities to their current position in the world 
+     */
     public void setEntityPosition(Entity entity) {
         if (idToPosition == null || idToPosition.get(entity.getID()) == null) {
             setWorldChar(entity.getPosition(), entity.getSprite());
@@ -147,6 +204,12 @@ public class World extends JFrame implements KeyListener {
         }
     }
 
+    /** 
+     * @param position position of character to replace 
+     * @param sprite the character to replace with 
+     *
+     * sets character at position with the sprite 
+     */
     private void setWorldChar(Position position, char sprite) {
         char[] lineToMutate = this.world.get(position.getY()).toCharArray();
         if (!isObstacle(lineToMutate[position.getX()]) || isPlayer(lineToMutate[position.getX()])) {
@@ -165,6 +228,11 @@ public class World extends JFrame implements KeyListener {
 
     // Key Input
 
+    /**
+     * @param e key event 
+     *
+     * Handles key presses 
+     */
     public void keyPressed(KeyEvent e) {
         int keycode = e.getKeyCode();
         Position tmpSpawn = this.getLevel().getPlayerSpawn();
@@ -216,6 +284,17 @@ public class World extends JFrame implements KeyListener {
             case KeyEvent.VK_2:
                 this.player.setWeaponIndex(1);
                 break;
+            case KeyEvent.VK_SPACE:
+                if (getPlayer().getCurrentAmmo(getPlayer().getWeaponIndex()) > 0) {
+                    this.player.shoot();
+                    int id = this.findProjectileTarget(this.player.getDirection(), this.getPlayer().getPosition());
+                    if (id != 0) this.player.addPoints(25);
+                    this.damageEntity(this.player.getCurrentWeaponDamage(), id);
+                }
+                break;
+            case KeyEvent.VK_R:
+                this.player.reload();
+                break;
         }
         // check to make sure player will not collide
         if (!this.willCollide(this.player.getPosition().plus(newPos))) {
@@ -231,6 +310,11 @@ public class World extends JFrame implements KeyListener {
 
     }
 
+    /**
+     * @return the prompt if there is one for interacting 
+     *
+     * returns an interactable prompt if there is one in front of the player 
+     */
     public String checkForInteractPrompt() {
         if (this.isInteractable(this.player.getDSprite().getPosition())) {
             return this.interactPrompt(this.player.getDSprite().getPosition());
@@ -238,6 +322,12 @@ public class World extends JFrame implements KeyListener {
         return "";
     }
 
+    /**
+     * checks for if the character is an object that should not be walked over
+     *
+     * @param character char to check
+     * @return true if it is an object, false otherwise 
+     */
     private boolean isObstacle(char character) {
         if (
             character != ' ' &&
@@ -248,16 +338,31 @@ public class World extends JFrame implements KeyListener {
         return false;
     }
 
+    /** 
+     * checks to see if character is of the player sprite 
+     *
+     * @param character char to check
+     * @return true if it is player, false otherwise 
+     */
     public boolean isPlayer(char character) {
         if (character == '*') return true;
         return false;
     }
 
+    /** 
+     * checks to see if the character is a zombie 
+     *
+     * @param character char to check 
+     * @return true if it is a zombie, false otherwise 
+     */
     public boolean isZombie(char character) {
         if (character == '@') return true;
         return false;
     }
 
+    /** 
+     * clears the screen and prints the level with all entities and sprites 
+     */
     public void renderWorld() {
         // clear screen
         System.out.print("\033[H\033[2J");
@@ -266,6 +371,12 @@ public class World extends JFrame implements KeyListener {
         }
     }
 
+    /**
+     * checks to see if a position will collide with an obstacle 
+     *
+     * @param position to check 
+     * @return true if it will collide, false otherwise 
+     */
     public boolean willCollide(Position position) {
         char[] line = this.world.get(position.getY()).toCharArray();
         char character = line[position.getX()];
@@ -273,11 +384,23 @@ public class World extends JFrame implements KeyListener {
         return isObstacle(character);
     }
 
+    /** 
+     * checks to see if position is interactable 
+     *
+     * @param position position to check 
+     * @return true if the position is interactable, false otherwise 
+     */
     public boolean isInteractable(Position position) {
         if (this.level.getInteractables().get(position) != null) return true;
         return false;
     }
 
+    /**
+     * returns the prompt of interactable at specific position 
+     *
+     * @param position position of interactable 
+     * @return returns the interact prompt 
+     */
     public String interactPrompt(Position position) {
         if (isInteractable(position)) {
             return this.level.getInteractables().get(position).getPrompt();
@@ -285,12 +408,20 @@ public class World extends JFrame implements KeyListener {
         return "";
     }
 
+    /**
+     * interacts with specific position 
+     *
+     * @param position position to interact with 
+     */
     public void interact(Position position) {
         Interactable interactable = this.level.getInteractables().get(position);
 
         if (isInteractable(position) && interactable.isBuyable()) {
             // default behavior for all interactables
-            this.level.buyInteractable(position);
+            if (getPlayer().getPoints() >= interactable.getCost()) {
+                this.level.buyInteractable(position);
+                player.subtractPoints(interactable.getCost());
+            }
         } else {
             if (interactable instanceof Door) interactDoor((Door) interactable);
             else if (interactable instanceof Perk) {
@@ -308,6 +439,11 @@ public class World extends JFrame implements KeyListener {
         }
     }
 
+    /** 
+     * implementation for weapon interacts 
+     *
+     * @param weapon the weapon interactable 
+     */
     private void interactWeapon(Weapon weapon) {
         for (int i = 0; i < this.player.getWeapons().length; i++) {
             if (this.player.getWeapons()[i] == null) {
@@ -318,10 +454,20 @@ public class World extends JFrame implements KeyListener {
         this.player.setCurrentWeapon(weapon.getWeapon());
     }
 
+    /** 
+     * implementation for perk interactables 
+     *
+     * @param perk perk to interact with 
+     */
     private void interactPerk(Perk perk) {
         this.player.addMaxHealth(perk.getHealthMultiplier());
     }
 
+    /** 
+     * implementation for door interactable 
+     *
+     * @param door to interact with 
+     */
     private void interactDoor(Door door) {
         // move to next room
         this.updateLevels();
@@ -332,11 +478,76 @@ public class World extends JFrame implements KeyListener {
         this.level.setPlayerSpawn(door.getResultantPosition());
     }
 
+    /** 
+     * heal player by so much health 
+     *
+     * @param health the health to heal 
+     */
     public void healPlayer(int health) {
         this.player.addHealth(health);
     }
 
+    /** 
+     * damage player by so much 
+     *
+     * @param damage amount of health to damage player 
+     */
     public void damagePlayer(int damage) {
         this.player.subtractHealth(damage);
+        if (this.getPlayer().getHealth() <= 0) {
+            this.removeEntity(1);
+            this.removeEntity(2);
+            System.exit(0);
+        }
+    }
+
+    /** 
+     * damage entity with specific id 
+     *
+     * @param damage amount to damage 
+     * @param id id of entity to damage 
+     */
+    public void damageEntity(int damage, int id) {
+        if (getEntityByID(id) == null) return;
+        this.entities.get(id).substractHealth(damage);
+        if (this.entities.get(id).getHealth() <= 0) this.removeEntity(id);
+    } 
+
+    /** 
+     * find hit scan target 
+     *
+     * @param direction direction the projectile is moving 
+     * @param position starting position of projectile 
+     */
+    public int findProjectileTarget(Directions direction, Position position) {
+        Position addend = new Position(0, 0);
+        Position finalPosition = new Position(0, 0);
+        switch (direction) {
+            case RIGHT:
+                addend = new Position(1, 0);
+                finalPosition = new Position(this.getLevel().getBounds().getX(), position.getY());
+                break;
+            case LEFT:
+                addend = new Position(-1, 0);
+                finalPosition = new Position(0, position.getY());
+                break;
+            case UP:
+                addend = new Position(0, -1);
+                finalPosition = new Position(position.getX(), 0);
+                break;
+            case DOWN:
+                addend = new Position(0, 1);
+                finalPosition = new Position(position.getX(), this.getLevel().getBounds().getY());
+                break;
+        }
+        for (Position projPos = new Position(0, 0); !finalPosition.equals(projPos.plus(position)); projPos = projPos.plus(addend)) {
+            if (projPos.equals(new Position(0, 0))) continue;
+            for (int id = 3; id <= Collections.max(this.getEntities().keySet()); id++) {
+                if (getEntityByID(id) != null && getEntityByID(id).getPosition().equals(position.plus(projPos))) {
+                    return id;
+                }
+            }
+        }
+        return 0;
     }
 }
