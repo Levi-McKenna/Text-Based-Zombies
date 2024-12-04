@@ -24,6 +24,7 @@ map
 >Make sure to have <a
 href="https://www.oracle.com/java/technologies/downloads/">JDK</a>23 or greater
 installed)
+
 This project was made with the help of the *Maven* build dependency and
 can be packaged using it.
 <a href="https://maven.apache.org/download.cgi">Navigate here to install *Maven*</a>
