@@ -1,7 +1,6 @@
 # Text-Based-Zombies
 
-## An in-terminal game application based off the hit games Call of Duty: Black
-Ops I | II | III Zombies!
+## An in-terminal game application based off the hit games Call of Duty: Black Ops I | II | III Zombies!
 
 This project was made as my final skills project for my intro to programming
 class. It was quite rushed, so there are probably quite a few concurrency bugs.
