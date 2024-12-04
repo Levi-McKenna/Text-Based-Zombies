@@ -47,9 +47,14 @@ public class World extends JFrame implements KeyListener {
 
             // add all directories to levelDirs
             for (int i = 0; i < files.length; i++) {
-                levelDirs[i] = files[i].toString();
+                String fileName = files[i].toPath().getFileName().toString().replaceFirst("[.][^.]+$", "");
+                System.out.println(fileName);
+                if (!fileName.equals("Metadata")) {
+                    levelDirs[fileName.charAt(fileName.length()-1)-'1'] = files[i].toString();
+                } else levelDirs[levelDirs.length-1] = files[i].toString();
             }
         } else {
+            // for debugging
             System.out.println("Error - " + dir.getAbsolutePath() + " is not a directory");
             File pwd = new File(".");
             System.out.println(pwd.getAbsolutePath());
@@ -211,6 +216,7 @@ public class World extends JFrame implements KeyListener {
      * sets character at position with the sprite 
      */
     private void setWorldChar(Position position, char sprite) {
+        if (position.getY() >= this.world.size() || position.getY() < 0) return;
         char[] lineToMutate = this.world.get(position.getY()).toCharArray();
         if (!isObstacle(lineToMutate[position.getX()]) || isPlayer(lineToMutate[position.getX()])) {
             lineToMutate[position.getX()] = sprite;
@@ -285,7 +291,7 @@ public class World extends JFrame implements KeyListener {
                 this.player.setWeaponIndex(1);
                 break;
             case KeyEvent.VK_SPACE:
-                if (getPlayer().getCurrentAmmo(getPlayer().getWeaponIndex()) > 0) {
+                if (getPlayer().getCurrentAmmo(getPlayer().getWeaponIndex()) > 0 && getPlayer().getCurrentWeapon() != null) {
                     this.player.shoot();
                     int id = this.findProjectileTarget(this.player.getDirection(), this.getPlayer().getPosition());
                     if (id != 0) this.player.addPoints(25);
@@ -510,7 +516,10 @@ public class World extends JFrame implements KeyListener {
     public void damageEntity(int damage, int id) {
         if (getEntityByID(id) == null) return;
         this.entities.get(id).substractHealth(damage);
-        if (this.entities.get(id).getHealth() <= 0) this.removeEntity(id);
+        if (this.entities.get(id).getHealth() <= 0) {
+            this.removeEntity(id);
+            this.player.addPoints(50);
+        }
     } 
 
     /** 

@@ -8,7 +8,7 @@ package TBZ.world;
 */
 public enum Weapons {
     PISTOL(8, 25),
-    OLYMPIA(2, 100),
+    OLYMPIA(2, 75),
     M14(14, 50);
 
     private int ammo;

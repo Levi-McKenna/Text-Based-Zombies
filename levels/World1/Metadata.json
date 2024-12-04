@@ -1,0 +1,188 @@
+{
+    "0": {
+        "playerSpawn": {
+            "x": 13,
+            "y": 3
+        },
+        "doors": [
+            {
+                "position": {"x": 0, "y": 4},
+                "resultantLevel": 1,
+                "resultantPosition": {"x": 14, "y": 3},
+                "buyable": true,
+                "cost": 500
+            },
+            {
+                "position": {"x": 26, "y": 2},
+                "resultantLevel": 2,
+                "resultantPosition": {"x": 1, "y": 3},
+                "buyable": true,
+                "cost": 750
+            }
+        ],
+        "spawns": [
+            {
+                "x": 6,
+                "y": 1
+            },
+            {
+                "x": 22,
+                "y": 1
+            },
+            {
+                "x": 13,
+                "y": 6
+            },
+            {
+                "x": 14,
+                "y": 6
+            }
+        ],
+        "perks": [],
+        "weapons": []
+    },
+    "1": {
+        "playerSpawn": {
+            "x": -1,
+            "y": -1
+        },
+        "doors": [
+            {
+                "position": {"x": 15, "y": 3},
+                "resultantLevel": 0,
+                "resultantPosition": {"x": 1, "y": 4},
+                "buyable": false,
+                "cost": 500
+            }
+        ],
+        "spawns": [
+            {
+                "x": 4,
+                "y": 1
+            },
+            {
+                "x": 14,
+                "y": 1
+            }
+        ],
+        "perks": [],
+        "weapons": [
+            {
+                "position": {"x": 1, "y": 0},
+                "weapon": "OLYMPIA",
+                "cost": 750
+            }
+        ]
+    },
+    "2": {
+        "playerSpawn": {
+            "x": -1,
+            "y": -1
+        },
+        "doors": [
+            {
+                "position": {"x": 0, "y": 3},
+                "resultantLevel": 0,
+                "resultantPosition": {"x": 25, "y": 2},
+                "buyable": false,
+                "cost": 500
+            },
+            {
+                "position": {"x": 26, "y": 5},
+                "resultantLevel": 3,
+                "resultantPosition": {"x": 1, "y": 1},
+                "buyable": true,
+                "cost": 1250
+            }
+        ],
+        "spawns": [
+            {
+                "x": 3,
+                "y": 1
+            },
+            {
+                "x": 4,
+                "y": 1
+            },
+            {
+                "x": 16,
+                "y": 1
+            },
+            {
+                "x": 17,
+                "y": 1
+            },
+            {
+                "x": 25,
+                "y": 2
+            },
+            {
+                "x": 25,
+                "y": 3
+            },
+            {
+                "x": 21,
+                "y": 7
+            },
+            {
+                "x": 12,
+                "y": 7
+            },
+            {
+                "x": 13,
+                "y": 7
+            },
+            {
+                "x": 1,
+                "y": 7
+            }
+        ],
+        "perks": [],
+        "weapons": [
+            {
+                "position": {"x": 25, "y": 0},
+                "weapon": "PISTOL",
+                "cost": 300
+            }
+        ]
+    },
+    "3": {
+        "playerSpawn": {
+            "x": -1,
+            "y": -1
+        },
+        "doors": [
+            {
+                "position": {"x": 0, "y": 1},
+                "resultantLevel": 2,
+                "resultantPosition": {"x": 25, "y": 5},
+                "buyable": false,
+                "cost": 500
+            }
+        ],
+        "spawns": [
+            {
+                "x": 1,
+                "y": 2
+            },
+            {
+                "x": 9,
+                "y": 3
+            }
+        ],
+        "perks": [
+            {
+                "position": {"x": 9, "y": 1},
+                "perkType": "Juggernog",
+                "cost": 2500
+            }
+        ],
+        "weapons": [
+            {
+                "position": {"x": 2, "y": 0},
+                "weapon": "M14",
+                "cost": 1750
+            }
+        ]
+    }
+}

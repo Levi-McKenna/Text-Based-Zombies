@@ -37,7 +37,7 @@ public class Game {
      * Initializes this.world and sets the world directory
      */
     public Game() {
-        this.world = new World("./levels/test");
+        this.world = new World("./levels/World1");
     }    
 
     /**
