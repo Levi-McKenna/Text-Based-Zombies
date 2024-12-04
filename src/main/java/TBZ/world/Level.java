@@ -118,6 +118,7 @@ public class Level {
     private void parseMetadata(String metaPath, int levelIndex) {
         try {
             File reader = new File(metaPath);
+            System.out.println(metaPath);
             String content = new String(Files.readAllBytes(Paths.get(reader.toURI())));
             
             JSONObject obj = new JSONObject(content);
@@ -176,7 +177,7 @@ public class Level {
                 case "M14":
                     weaponType = Weapons.M14;
                     break;
-                case "Olympia":
+                case "OLYMPIA":
                     weaponType = Weapons.OLYMPIA;
                     break;
                 default:
